@@ -80,6 +80,7 @@ model CinemaSeatType {
 }
 
 model BookedSeat {
+ id        Int       @id @default(autoincrement())
  seatId Int
  seat CinemaSeat @relation(fields: [seatId], references: [id])
  timeId Int
