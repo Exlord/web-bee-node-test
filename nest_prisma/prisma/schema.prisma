@@ -40,3 +40,38 @@ model Workshop {
 
   @@map("workshops")
 }
+
+model ShowRoom {
+  id        Int @id @default(autoincrement())
+  name      String
+}
+
+model Movie {
+  id        Int @id @default(autoincrement())
+  name      String
+
+  @@map("movies")
+}
+
+model MovieTime {
+  id        Int       @id @default(autoincrement())
+  start     DateTime
+  movieId   Int
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  showRoomId Int
+  showRoom ShowRoom @relation(fields: [showRoomId], references: [id])
+}
+
+model CinemaSeat {
+  id        Int       @id @default(autoincrement())
+  seatType String
+  showRoomId Int
+  showRoom ShowRoom @relation(fields: [showRoomId], references: [id])
+}
+
+model BookedSeat {
+ seatId Int
+ seat CinemaSeat @relation(fields: [seatId], references: [id])
+ timeId Int
+ time MovieTime @relation(fields: [timeId], references: [id])
+}
