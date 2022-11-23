@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Get, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ResponseMenuItemDto } from './dto/response-menu-item.dto';
 
 @Injectable()
 export class MenuItemsService {
@@ -81,6 +82,26 @@ export class MenuItemsService {
     ]
   */
   async getMenuItems() {
-    throw new Error('TODO in task 3');
+    const setChildren = (item: ResponseMenuItemDto) => {
+      item.children = itemsByParentId[item.id] ?? [];
+      if (item.children.length) item.children.forEach(setChildren);
+    };
+
+    const nestedItems: ResponseMenuItemDto[] = [];
+    const flatItems = await this.prisma.menuItem.findMany();
+    const itemsByParentId = {};
+    flatItems.forEach(item => {
+      const parentId = item.parentId ?? 0;
+      if (!itemsByParentId[parentId]) itemsByParentId[parentId] = [];
+
+      itemsByParentId[parentId].push(item);
+    });
+    flatItems.filter(item => item.parentId === null).forEach((item: ResponseMenuItemDto) => {
+      setChildren(item);
+      nestedItems.push(item);
+    });
+
+    return nestedItems;
   }
+
 }
