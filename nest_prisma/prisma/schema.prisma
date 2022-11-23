@@ -49,6 +49,7 @@ model ShowRoom {
 model Movie {
   id        Int @id @default(autoincrement())
   name      String
+  ticketPrice Int
 
   @@map("movies")
 }
@@ -64,9 +65,18 @@ model MovieTime {
 
 model CinemaSeat {
   id        Int       @id @default(autoincrement())
-  seatType String
+  seatTypeId Int
+  seatType CinemaSeatType @relation(fields: [seatTypeId], references: [id])
   showRoomId Int
   showRoom ShowRoom @relation(fields: [showRoomId], references: [id])
+  locationX Int
+  locationY Int
+}
+
+model CinemaSeatType {
+  id        Int       @id @default(autoincrement())
+  name String
+  premiumPercentage Int
 }
 
 model BookedSeat {
